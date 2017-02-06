@@ -15,7 +15,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     </flow>
     <flow name="HelloWorldSubFlow">
         <set-variable variableName="flowVariable" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>
-        <logger message="Current flow variable is #[flowVars['flowVariable']] + #[server..dateTime]" level="INFO" doc:name="Display Flow Variable"/>
-        <set-payload value="#['Hello, ' + flowVars['flowVariable'] + '. Today is ' + server.dateTime.format('dd/MM/yy') + ' - From Sub Flow.'] " doc:name="Set Payload"/>
+        <set-session-variable variableName="sessionvalue" value="#['Session']" doc:name="Session Variable"/>
+        <set-property propertyName="out" value="#['Outbound Message']" doc:name="Property"/>
+        <logger message="Current flow variable is #[flowVars['flowVariable']] + #[sessionVars['sessionvalue']] + #[message.outboundProperties['out']]" level="INFO" doc:name="Display Flow Variable"/>
+        <set-payload value="#['Hello, ' + flowVars['flowVariable'] + '. Today is ' + server.dateTime.format('dd/MM/yy') + ' - From Sub Flow.' +sessionVars['sessionvalue'] + 'Out Message' + message.outboundProperties['out']] " doc:name="Set Payload"/>
     </flow>
 </mule>
