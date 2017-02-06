@@ -11,8 +11,11 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8678" doc:name="HTTP Listener Configuration"/>
     <flow name="HelloWorldFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/{name}" doc:name="HTTP"/>
+        <flow-ref name="HelloWorldSubFlow" doc:name="HelloWorldSubFlow"/>
+    </flow>
+    <flow name="HelloWorldSubFlow">
         <set-variable variableName="flowVariable" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>
         <logger message="Current flow variable is #[flowVars['flowVariable']] + #[server..dateTime]" level="INFO" doc:name="Display Flow Variable"/>
-        <set-payload value="#['Hello, ' + flowVars['flowVariable'] + '. Today is ' + server.dateTime.format('dd/MM/yy') + '.'] " doc:name="Set Payload"/>
+        <set-payload value="#['Hello, ' + flowVars['flowVariable'] + '. Today is ' + server.dateTime.format('dd/MM/yy') + ' - From Sub Flow.'] " doc:name="Set Payload"/>
     </flow>
 </mule>
