@@ -14,4 +14,8 @@ http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/
         <cxf:jaxws-service serviceClass="wsdlfirstcode.HelloWorldService" doc:name="CXF"/>
         <component class="helloworld.HelloWorldServiceImpl" doc:name="Java"/>
     </sub-flow>
+    <sub-flow name="simpleflowwthoutcxf">
+        <cxf:simple-service serviceClass="helloworld.AccountBalanceService" doc:name="Simple_Without_CXF"/>
+        <component class="helloworld.AccountBalanceServiceImpl" doc:name="Copy_of_Java"/>
+    </sub-flow>
 </mule>
