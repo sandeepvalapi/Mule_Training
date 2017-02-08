@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
     <flow name="dbconnectorFlow">
         <set-variable variableName="lastName" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>
         <db:select config-ref="MySQL_Configuration" doc:name="Database">
-            <db:parameterized-query/>
+            <db:parameterized-query><![CDATA[SELECT FIRST_NAME FROM EMPLOYEES WHERE LAST_NAME = #[flowVars.lastName]]]></db:parameterized-query>
         </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
     </flow>
