@@ -7,9 +7,12 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="root123" database="company" doc:name="MySQL Configuration"/>
     <flow name="dbconnectorFlow">
-        <variable-transformer doc:name="Variable"/>
-        <db:no-operation-selected config-ref="" doc:name="Database"/>
+        <set-variable variableName="lastName" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:parameterized-query/>
+        </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
     </flow>
 </mule>
