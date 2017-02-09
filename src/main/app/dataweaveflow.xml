@@ -46,7 +46,7 @@ payload.Root.Customers.*Customer map ((customer , indexOfCustomer) -> {
 		</dw:transform-message>
 		<logger level="INFO" metadata:id="607fa656-4b5b-4c65-a142-0fcf1d41c967"
 			doc:name="Logger" />
-		<file:outbound-endpoint path="src/main/resources/output1"
+		<file:outbound-endpoint path="src/main/resources/output"
 			outputPattern="Cust.csv" responseTimeout="10000" doc:name="File" />
 	</flow>
 </mule>
