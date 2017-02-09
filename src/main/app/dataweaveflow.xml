@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+	<configuration doc:name="Configuration">
+		<expression-language>
+			<global-functions>
+	def getFirstName(name) {
+	return name.split("\\s+")[0]
+	}
+	def getLastName(name) {
+	return name.split("\\s+")[1]
+	}
+			</global-functions>
+		</expression-language>
+	</configuration>
+	<flow name="dataweaveflowFlow">
+		<file:inbound-endpoint path="src/main/resources/orders"
+			moveToDirectory="src/main/resources/processed" responseTimeout="10000"
+			metadata:id="84ef373e-7d2e-4433-80b9-3a3050b18789" doc:name="File" />
+		<dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\Root.xml"/>
+			<dw:set-payload><![CDATA[%dw 1.0
+%output application/csv
+---
+payload.Root.Customers.*Customer map ((customer , indexOfCustomer) -> {
+	first_name: getFirstName(customer.ContactName),
+	last_name: getLastName(customer.ContactName),
+	company_name: customer.CompanyName,
+	address: customer.FullAddress.Address,
+	city: customer.FullAddress.City,
+	county: customer.FullAddress.Country,
+	state: "",
+	zip: customer.FullAddress.PostalCode,
+	phone1: customer.Phone,
+	phone2: customer.Fax,
+	email: "",
+	web: ""
+})]]></dw:set-payload>
+		</dw:transform-message>
+		<logger level="INFO" metadata:id="607fa656-4b5b-4c65-a142-0fcf1d41c967"
+			doc:name="Logger" />
+		<file:outbound-endpoint path="src/main/resources/output"
+			outputPattern="Cust.csv" responseTimeout="10000" doc:name="File" />
+	</flow>
+</mule>

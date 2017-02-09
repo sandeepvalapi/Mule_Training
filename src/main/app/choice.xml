@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <sub-flow name="choiceSub_Flow">
+        <set-session-variable variableName="product" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Session Variable"/>
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[select * from product
+where
+product_code = #[sessionVars.product]]]></db:parameterized-query>
+        </db:select>
+        <custom-transformer class="com.deloitte.choiceex.ProductTransformer" doc:name="Java"/>
+        <logger message="Logger Message - Message #[sessionVars.product] #[flowVars['productId']] #[message.payload]" level="INFO" doc:name="Logger"/>
+        <choice doc:name="Choice">
+            <when expression="#[flowVars['productId'] == 1]">
+                <logger level="INFO" doc:name="Logger" message="Selected Choice Number - #[flowVars['productId'] ]"/>
+                <component doc:name="Java" class="com.deloitte.choiceex.Laptop"/>
+            </when>
+            <when expression="#[flowVars['productId'] == 2]">
+                <logger level="INFO" doc:name="Logger" message="Selected Choice Number - #[flowVars['productId'] ]"/>
+                <component doc:name="Java" class="com.deloitte.choiceex.HardDisk"/>
+            </when>
+            <when expression="#[flowVars['productId'] == 4]">
+                <logger level="INFO" doc:name="Logger" message="Selected Choice Number - #[flowVars['productId'] ]"/>
+                <component doc:name="Java" class="com.deloitte.choiceex.Charger"/>
+            </when>
+            <otherwise>
+                <logger level="INFO" doc:name="Logger" message="Selected Choice Number is Default"/>
+                <component doc:name="Java" class="com.deloitte.choiceex.Default"/>
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <catch-exception-strategy name="choiceCatch_Exception_Strategy">
+        <logger message="Inside Exception Strategy" level="INFO" doc:name="Logger"/>
+        <set-payload value="#['No Product Found']" doc:name="Set Payload"/>
+    </catch-exception-strategy>
+</mule>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8678" doc:name="HTTP Listener Configuration"/>
     <flow name="HelloWorldFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/{name}" doc:name="HTTP"/>
-        <flow-ref name="dbconnectorFlow" doc:name="dbconnectorFlow"/>
+        <flow-ref name="scattergatherSub_Flow" doc:name="scattergatherSub_Flow"/>
     </flow>
     <flow name="HelloWorldSubFlow">
         <set-variable variableName="flowVariable" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>
