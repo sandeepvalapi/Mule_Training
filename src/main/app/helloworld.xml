@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8678" doc:name="HTTP Listener Configuration"/>
     <flow name="HelloWorldFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/{name}" doc:name="HTTP"/>
-        <flow-ref name="choiceSub_Flow" doc:name="choiceSub_Flow"/>
+        <flow-ref name="scattergatherSub_Flow" doc:name="scattergatherSub_Flow"/>
     </flow>
     <flow name="HelloWorldSubFlow">
         <set-variable variableName="flowVariable" value="#[message.inboundProperties['http.uri.params']['name']]" doc:name="Variable"/>

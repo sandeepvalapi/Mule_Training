@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <sub-flow name="Books">
+        <scripting:component doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[Thread.sleep(600);]]></scripting:script>
+        </scripting:component>
+        <set-payload value="I am in Book flow at #[server.dateTime.format(&quot;HH:mm:ss:SSS&quot;)]" doc:name="Set Payload"/>
+        <logger message="In book Flow Logger" level="INFO" doc:name="Logger"/>
+        <!-- <scripting:component doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[throw new IllegalArgumentException('New Exception')]]></scripting:script>
+        </scripting:component> -->
+        <logger message="After groovy excception" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+    <sub-flow name="Cars">
+        <set-payload value="#['I am in Cars flow - Invoked at' + server.dateTime.format(&quot;HH:mm:ss:SSS&quot;)]" doc:name="Set Payload"/>
+        <logger message="I am in cars Logger" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+    <sub-flow name="scattergatherSub_Flow">
+        <logger message="I am in Scatter Gather Subflow" level="INFO" doc:name="Logger"/>
+        <scatter-gather doc:name="Scatter-Gather">
+            <processor-chain>
+                <logger message="After Scatter gather " level="INFO" doc:name="Logger"/>
+                <flow-ref name="Cars" doc:name="Cars"/>
+            </processor-chain>
+            <processor-chain>
+                <logger message="After Scatter gather " level="INFO" doc:name="Logger"/>
+                <flow-ref name="Books" doc:name="Books"/>
+            </processor-chain>
+        </scatter-gather>
+        <logger message="After Scatter gather #[payload] and #[message.exception]" level="INFO" doc:name="Logger"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </sub-flow>
+    <catch-exception-strategy name="scattergatherCatch_Exception_Strategy">
+        <logger message="I am in Error Handling" level="INFO" doc:name="Logger"/>
+    </catch-exception-strategy>
+</mule>
